@@ -19,8 +19,11 @@ async function invokeLLM() {
     {
       role: "system",
       content: `You are smart assistant who answers the questions asked.
+      Current date and time is ${new Date().toUTCString()}.
                 You have access to the following tools:
-                1.webSearch({query}): {query:String}`
+                1.webSearch({query}): {query:String}.
+
+                `
     },
 
     // { 
@@ -107,8 +110,9 @@ async function invokeLLM() {
         }
       }
     }
-    rl.close();
   }
+    rl.close();
+
 
 
 }
