@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useRef } from "react";
 
 type Message = {
   role: "user" | "bot";
@@ -10,13 +11,22 @@ export default function Container() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+    const threadIDRef = useRef<string | null>(null);
 
+     if (!threadIDRef.current) {
+    threadIDRef.current =
+      Date.now().toString(36) +
+      Math.random().toString(36).substring(2, 8);
+  }
+
+  const threadID = threadIDRef.current;
   const sendToBackend = async (userText: string) => {
-    const res = await axios.post("/api/chat", {
+    const res = await axios.post("http://localhost:3000/chat", {
+      threadID:threadID,
       message: userText,
     });
 
-    return res.data.reply; 
+    return res.data.message; 
   };
 
   const handleSubmit = async (
@@ -65,7 +75,7 @@ export default function Container() {
           className={`my-3 p-3 rounded-xl max-w-fit ${
             msg.role === "user"
               ? "bg-neutral-800 ml-auto"
-              : "bg-neutral-700"
+              : ""
           }`}
         >
           {msg.text}
@@ -73,8 +83,8 @@ export default function Container() {
       ))}
 
       {loading && (
-        <div className="bg-neutral-700 p-3 rounded-xl max-w-fit">
-          Typing...
+        <div className=" p-3 rounded-xl max-w-fit">
+          Thinking...
         </div>
       )}
 
